@@ -8,7 +8,7 @@
  * GENERAL CONFIGURATION SETTINGS
  ********************************/
 
-const LanguageLocaleCode = "en";
+const LanguageLocaleCode = "pt-br";
 
 // PUBLIC VALUES
 const FiveMServerName = "My FiveM Server";
@@ -30,8 +30,8 @@ const DiscordBotToken = "CHANGE";
 const DiscordGuildId = "000000000000000000";
 
 // STAFF CHAT
-const EnableStaffChatForwarding = false;
 const DiscordStaffChannelId = "000000000000000000";
+const EnableStaffChatForwarding = true;
 const AdditionalStaffChatRoleIds = [
     // "000000000000000",
 ];
