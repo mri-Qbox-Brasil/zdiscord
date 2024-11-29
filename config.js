@@ -62,7 +62,7 @@ const AutoAcePermissions = {
 
 // Other
 const SaveScreenshotsToServer = false;
-
+const EnableNameChanger = false;
 
 /** ************************
  * WEBHOOK LOGGING SETTINGS
@@ -104,6 +104,7 @@ module.exports = {
     EnableAutoAcePermissions: getConBool("discord_enable_ace_perms", EnableAutoAcePermissions),
     AutoAcePermissions: AutoAcePermissions,
     SaveScreenshotsToServer: getConBool("discord_save_screenshots", SaveScreenshotsToServer),
+    EnableNameChanger: getConBool("discord_enable_name_changer", EnableNameChanger),
     DiscordStaffChannelId: GetConvar("discord_staff_channel_id", DiscordStaffChannelId),
     LoggingWebhooks: LoggingWebhooks,
     LoggingAlertPingId: GetConvar("discord_logging_ping_id", LoggingAlertPingId),
