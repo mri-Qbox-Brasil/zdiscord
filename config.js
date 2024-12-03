@@ -62,7 +62,12 @@ const AutoAcePermissions = {
 
 // Other
 const SaveScreenshotsToServer = false;
-const EnableNameChanger = false;
+const NameChanger =  {
+    Enabled : true, // Ativa ou desativa o Name Changer
+    ShowRPNames : true, // Mostrar o nome do char
+    CompleteName : true, // Mostrar o nome completo do char
+    ShowCitizenID : false, // Mostrar o Citizen ID ao invés do nome
+};
 
 /** ************************
  * WEBHOOK LOGGING SETTINGS
@@ -104,7 +109,12 @@ module.exports = {
     EnableAutoAcePermissions: getConBool("discord_enable_ace_perms", EnableAutoAcePermissions),
     AutoAcePermissions: AutoAcePermissions,
     SaveScreenshotsToServer: getConBool("discord_save_screenshots", SaveScreenshotsToServer),
-    EnableNameChanger: getConBool("discord_enable_name_changer", EnableNameChanger),
+    NameChanger: {
+        Enabled: getConBool("discord_enable_name_changer", NameChanger.Enabled),
+        ShowRPNames: getConBool("discord_show_rp_names", NameChanger.ShowRPNames),
+        CompleteName: getConBool("discord_complete_name", NameChanger.CompleteName),
+        ShowCitizenID: getConBool("discord_show_citizen_id", NameChanger.ShowCitizenID),
+    },
     DiscordStaffChannelId: GetConvar("discord_staff_channel_id", DiscordStaffChannelId),
     LoggingWebhooks: LoggingWebhooks,
     LoggingAlertPingId: GetConvar("discord_logging_ping_id", LoggingAlertPingId),

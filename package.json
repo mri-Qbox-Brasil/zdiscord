@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/zfbx/zdiscord",
   "dependencies": {
-    "discord.js": "github:zfbx/discord.js"
+    "discord.js": "github:zfbx/discord.js",
+    "zdiscord": "file:"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
