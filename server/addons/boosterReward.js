@@ -3,7 +3,7 @@ let boosterReward;
 class BoosterReward {
     constructor(z) {
         this.z = z;
-        if (!z.config.Enabled) {
+        if (!z.config.EnableDiscordBot) {
             this.enabled = false;
             return;
         }
