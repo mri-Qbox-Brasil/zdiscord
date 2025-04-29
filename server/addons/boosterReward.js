@@ -3,6 +3,7 @@ let boosterReward;
 class BoosterReward {
   constructor(z) {
     this.z = z;
+    if (z.config.Enabled) return;
     this.enabled = z.config.BoosterReward.Enabled;
     this.BoosterRoleId = z.config.BoosterReward.BoosterRoleId;
     this.ExpiryRewardServerTrigger =

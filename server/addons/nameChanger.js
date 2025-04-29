@@ -2,6 +2,7 @@ let nameChanger;
 class NameChanger {
     constructor(z) {
         this.z = z;
+        if (!z.config.Enabled) return;
         this.enabled = z.config.NameChanger.Enabled;
         this.showRPNames = z.config.NameChanger.ShowRPNames;
         this.completeName = z.config.NameChanger.CompleteName;
