@@ -45,86 +45,102 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
+        const z = client.z;
         const subcommand = interaction.options.getSubcommand();
-        const interactionUser = interaction.options.getUser('usuario');
-        const interactionRole = interaction.options.getRole('cargo');
+        const user = interaction.options.getUser('usuario');
+        const role = interaction.options.getRole('cargo');
 
-        if (!interactionUser || !interactionRole) {
+        const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+        const fullRole = await interaction.guild.roles.fetch(role.id).catch(() => null);
+
+        if (!member || !fullRole) {
             return interaction.reply({ content: "❌ Usuário ou cargo inválido.", ephemeral: true });
         }
 
-        const member = await interaction.guild.members.fetch(interactionUser.id).catch(() => null);
-        const role = await interaction.guild.roles.fetch(interactionRole.id).catch(() => null);
-
-        if (!member || !role) {
-            return interaction.reply({ content: "❌ Usuário ou cargo inválido.", ephemeral: true });
-        }
-
-        // Verificações padrões do Discord
-
-        // Verifica se o bot tem permissão para gerenciar cargos
         const botMember = await interaction.guild.members.fetch(client.user.id);
+        const executor = interaction.member;
+
+        // Verificações de permissão
         if (!botMember.permissions.has("ManageRoles")) {
             return interaction.reply({ content: "❌ Não tenho permissão para gerenciar cargos (`ManageRoles`).", ephemeral: true });
         }
 
-        // Verifica se o cargo que o bot vai adicionar/remover está abaixo do cargo mais alto dele
-        if (role.position >= botMember.roles.highest.position) {
-            return interaction.reply({ content: "❌ Não consigo gerenciar esse cargo porque ele está acima ou no mesmo nível do meu cargo mais alto.", ephemeral: true });
+        if (fullRole.position >= botMember.roles.highest.position) {
+            return interaction.reply({ content: "❌ Esse cargo está acima ou no mesmo nível do meu cargo mais alto.", ephemeral: true });
         }
 
-        if (interaction.member.roles.highest.position <= role.position && interaction.guild.ownerId !== interaction.user.id) {
+        if (executor.roles.highest.position <= fullRole.position && interaction.guild.ownerId !== executor.id) {
             return interaction.reply({ content: "❌ Você não pode gerenciar um cargo que é igual ou mais alto que o seu.", ephemeral: true });
         }
 
-        // Obter maior cargo permitido do executor (mod/admin/god)
-        const modRoleId = client.z.config.DiscordModRoleId;
-        const adminRoleId = client.z.config.DiscordAdminRoleId;
-        const godRoleId = client.z.config.DiscordGodRoleId;
+        // Limite de permissão baseado na hierarquia do sistema
+        const { DiscordModRoleId, DiscordAdminRoleId, DiscordGodRoleId } = z.config;
+        const executorRoles = executor.roles.cache;
+        let limiteCargo = null;
 
-        const executorRoles = interaction.member.roles.cache;
-        let permissaoLimite = null;
-
-        if (executorRoles.has(godRoleId)) {
-            permissaoLimite = interaction.guild.roles.cache.get(godRoleId);
-        } else if (executorRoles.has(adminRoleId)) {
-            permissaoLimite = interaction.guild.roles.cache.get(adminRoleId);
-        } else if (executorRoles.has(modRoleId)) {
-            permissaoLimite = interaction.guild.roles.cache.get(modRoleId);
+        if (executorRoles.has(DiscordGodRoleId)) {
+            limiteCargo = interaction.guild.roles.cache.get(DiscordGodRoleId);
+        } else if (executorRoles.has(DiscordAdminRoleId)) {
+            limiteCargo = interaction.guild.roles.cache.get(DiscordAdminRoleId);
+        } else if (executorRoles.has(DiscordModRoleId)) {
+            limiteCargo = interaction.guild.roles.cache.get(DiscordModRoleId);
         }
 
-        if (!permissaoLimite) {
+        if (!limiteCargo) {
             return interaction.reply({ content: "❌ Você não tem permissão suficiente para usar este comando.", ephemeral: true });
         }
 
-        if (role.position >= permissaoLimite.position) {
-            return interaction.reply({ content: `❌ Você só pode gerenciar cargos abaixo de **${permissaoLimite.name}**.`, ephemeral: true });
+        if (role.position >= limiteCargo.position && interaction.guild.ownerId !== interaction.user.id) {
+            z.utils.log.debug(`Cargo ${role.name} está acima do limite de permissão ${limiteCargo.name}`);
+            z.utils.log.debug(`Owner ID: ${interaction.guild.ownerId}, Executor ID: ${interaction.user.id}`);
+            return interaction.reply({ content: `❌ Você só pode gerenciar cargos abaixo de **${limiteCargo.name}**.`, ephemeral: true });
         }
 
-        // Executar ação
-        if (subcommand === "add") {
-            if (member.roles.cache.has(role.id)) {
-                return interaction.reply({ content: "ℹ️ O usuário já possui esse cargo.", ephemeral: true });
+        // Impedir atribuição dos cargos especiais por quem já os possui
+        // Impedir que cargos especiais gerenciem entre si
+        const cargosEspeciais = [DiscordModRoleId, DiscordAdminRoleId, DiscordGodRoleId];
+        const isExecutorEspecial = cargosEspeciais.some(id => executorRoles.has(id));
+        const isAlvoEspecial = cargosEspeciais.includes(role.id);
+
+        if (isExecutorEspecial && isAlvoEspecial && interaction.guild.ownerId !== interaction.user.id) {
+            return interaction.reply({
+                content: `❌ Você não pode atribuir ou remover cargos especiais como **${role.name}**.`,
+                ephemeral: true
+            });
+        }
+
+
+        // Ações
+        const userTag = member.user.tag;
+        const roleName = fullRole.name;
+
+        const respondError = (msg, err) => {
+            z.utils.log.error(`${subcommand.toUpperCase()} > ${msg}`, err);
+            return interaction.reply({ content: `❌ ${msg}`, ephemeral: true });
+        };
+
+        try {
+            if (subcommand === "add") {
+                if (member.roles.cache.has(fullRole.id)) {
+                    return interaction.reply({ content: "ℹ️ O usuário já possui esse cargo.", ephemeral: true });
+                }
+
+                await member.roles.add(fullRole);
+                z.utils.log.info(`Cargo ${roleName} adicionado a ${userTag} por ${executor.user.tag}`);
+                return interaction.reply({ content: `✅ Cargo **${roleName}** adicionado para **${userTag}**.`, ephemeral: true });
             }
 
-            await member.roles.add(role).catch(error => {
-                console.error("Erro ao adicionar cargo:", error);
-                return interaction.reply({ content: "❌ Erro ao tentar adicionar o cargo. Verifique minhas permissões.", ephemeral: true });
-            });
+            if (subcommand === "remove") {
+                if (!member.roles.cache.has(fullRole.id)) {
+                    return interaction.reply({ content: "ℹ️ O usuário não possui esse cargo.", ephemeral: true });
+                }
 
-            return interaction.reply({ content: `✅ Cargo **${role.name}** adicionado para **${member.user.tag}**.`, ephemeral: true });
-
-        } else if (subcommand === "remove") {
-            if (!member.roles.cache.has(role.id)) {
-                return interaction.reply({ content: "ℹ️ O usuário não possui esse cargo.", ephemeral: true });
+                await member.roles.remove(fullRole);
+                z.utils.log.info(`Cargo ${roleName} removido de ${userTag} por ${executor.user.tag}`);
+                return interaction.reply({ content: `✅ Cargo **${roleName}** removido de **${userTag}**.`, ephemeral: true });
             }
-
-            await member.roles.remove(role).catch(error => {
-                console.error("Erro ao remover cargo:", error);
-                return interaction.reply({ content: "❌ Erro ao tentar remover o cargo. Verifique minhas permissões.", ephemeral: true });
-            });
-
-            return interaction.reply({ content: `✅ Cargo **${role.name}** removido de **${member.user.tag}**.`, ephemeral: true });
+        } catch (err) {
+            return respondError("Erro ao tentar gerenciar o cargo. Verifique minhas permissões.", err);
         }
     },
 };
