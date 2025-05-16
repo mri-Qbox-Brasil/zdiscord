@@ -9,6 +9,7 @@
  * or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
  */
 
+const { debug } = require("console");
 const util = require("util");
 
 
@@ -39,17 +40,15 @@ exports.getPlayerDiscordId = getPlayerDiscordId;
 /** Get player source from discord id
  * @param {string} discordid - Discord ID
  * @returns {string|boolean} - source or false */
-const getPlayerFromDiscordId = async (discordid) => {
-    let player = false;
-    getPlayers().some(async function(p, i, a) {
-        const id = getPlayerDiscordId(p);
-        if (id == discordid) {
-            player = p;
-            return true;
+const getPlayerFromDiscordId = async (discordId) => {
+    const players = getPlayers();
+    for (const player of players) {
+        const id = getPlayerDiscordId(player);
+        if (id === discordId) {
+            return player;
         }
-        return false;
-    });
-    return player;
+    }
+    return false;
 };
 exports.getPlayerFromDiscordId = getPlayerFromDiscordId;
 
@@ -117,6 +116,17 @@ const log = {
      * @param {object} settings - Optional overrides of style and label */
     error: (content, { color = "\x1b[1;31m", tag = "ERR" } = {}) => {
         log.write(content, { color, tag, error: true });
+        return false;
+    },
+
+    /** Debug message with magenta color in console with timestamps
+     * @param {string} content - Information to log to console
+     * @param {object} settings - Optional overrides of style and label */
+    debug: (content, { color = "\x1b[1;35m", tag = "DBG" } = {}) => {
+        if (typeof content === "object") {
+            content = util.inspect(content, { depth: Infinity });
+        }
+        log.write(content, { color, tag });
         return false;
     },
 
