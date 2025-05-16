@@ -82,7 +82,9 @@ module.exports = {
 
 async function showDeleteConfirmation(interaction, char, client, id) {
     const playerId = await client.utils.getPlayerFromDiscordId(id);
-    const isOnline = !!client.QBCore.Functions.GetPlayer(parseInt(playerId));
+    const player = playerId ? client.QBCore.Functions.GetPlayer(parseInt(playerId)) : null;
+    client.utils.log.debug(`PlayerId: ${char.citizenid} - ${player?.PlayerData.citizenid} - ${player?.PlayerData.citizenid == char.citizenid}`);
+    const isOnline = player?.PlayerData.citizenid == char.citizenid;
 
     const charinfo = JSON.parse(char.charinfo || '{}');
     const warningMessage = isOnline
@@ -119,7 +121,7 @@ async function showDeleteConfirmation(interaction, char, client, id) {
 
         if (i.customId === `cancel_delete_${char.citizenid}`) {
             await interaction.editReply({
-                content: `❎ Ação cancelada. O personagem \`${char.name}\` não foi apagado.`,
+                content: `❌ Ação cancelada. O personagem \`${char.name}\` não foi apagado.`,
                 components: [],
             });
             return;
