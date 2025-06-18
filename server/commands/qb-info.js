@@ -40,6 +40,35 @@ module.exports = {
             const player = playerId ? client.QBCore.Functions.GetPlayer(parseInt(playerId)) : null;
             const isOnline = player?.PlayerData.citizenid == char.citizenid;
 
+            let license = null;
+            let license2 = null;
+            let discord = null;
+            let fivem = null;
+            let identifiers = [];
+            if (isOnline) {
+                identifiers = getPlayerIdentifiers(playerId);
+            } else {
+                ids = await global.exports.oxmysql.query_async(`
+                    SELECT * FROM users WHERE userId in (
+                        SELECT userId FROM players WHERE citizenid = ?
+                    )
+                `, [char.citizenid]);
+                console.log(identifiers);
+                if (ids && ids.length > 0) {
+                    identifiers[0] = ids[0].discord;
+                    identifiers[1] = ids[0].license;
+                    identifiers[2] = ids[0].license2;
+                    identifiers[3] = ids[0].fivem;
+                }
+            }
+
+            for (const id of identifiers) {
+                if (id.startsWith('license:')) license = id;
+                if (id.startsWith('license2:')) license2 = id;
+                if (id.startsWith('discord:')) discord = id;
+                if (id.startsWith('fivem:')) fivem = id;
+            }
+
             const charName = `${charinfo.firstname} ${charinfo.lastname}`;
             const embed = {
                 title: `${isOnline ? "[" + playerId + "]" : ""} ${charName} ${isOnline ? "(🟢 Online)" : "(🔴 Offline)"}`,
@@ -53,7 +82,16 @@ module.exports = {
                     { name: "Gangue", value: `${gang.label} (${gang.grade.name})`, inline: true },
                     { name: "Dinheiro", value: `$${money.cash}`, inline: true },
                     { name: "Banco", value: `$${money.bank}`, inline: true },
-                    // Adicione mais campos conforme necessário
+                    {
+                        name: "Identificadores",
+                        value: [
+                            `\`\`License:\`\` ${license || "(vazio)"}`,
+                            `\`\`License2:\`\` ${license2 || "(vazio)"}`,
+                            `\`\`Discord:\`\` ${discord || "(vazio)"}`,
+                            `\`\`Fivem:\`\` ${fivem || "(vazio)"}`,
+                        ].join("\n"),
+                        inline: false,
+                    },
                 ],
                 color: 0x3498db,
             };
