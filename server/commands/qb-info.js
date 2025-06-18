@@ -42,7 +42,7 @@ module.exports = {
 
             const charName = `${charinfo.firstname} ${charinfo.lastname}`;
             const embed = {
-                title: `[${playerId}] ${charName} ${isOnline ? "(🟢 Online)" : "(🔴 Offline)"}`,
+                title: `${isOnline ? "[" + playerId + "]" : ""} ${charName} ${isOnline ? "(🟢 Online)" : "(🔴 Offline)"}`,
                 fields: [
                     { name: "CID", value: playerData.citizenid || "(vazio)", inline: true },
                     { name: "Telefone", value: charinfo.phone || "(vazio)", inline: true },
