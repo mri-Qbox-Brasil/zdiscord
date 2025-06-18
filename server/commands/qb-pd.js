@@ -152,7 +152,6 @@ async function showDeleteConfirmation(interaction, char, client, id) {
         //     Screenshot: false // ou false, conforme desejado
         // });
 
-
         await interaction.editReply({
             content: `✅ Personagem \`${charinfo.firstname} ${charinfo.lastname}\` (\`${char.citizenid}\`) foi apagado com sucesso.${isOnline ? " (ele estava online e foi kickado antes da exclusão)" : ""}`,
             components: [],
@@ -170,3 +169,26 @@ async function showDeleteConfirmation(interaction, char, client, id) {
         }
     });
 }
+
+onNet('QBCore:Server:PlayerLoaded', async (player) => {
+    const playerId = player.PlayerData.source;
+    const identifiers = getPlayerIdentifiers(playerId);
+
+    let license = null;
+    let license2 = null;
+    let discord = null;
+    let fivem = null;
+
+    for (const id of identifiers) {
+        if (id.startsWith('license:')) license = id;
+        if (id.startsWith('license2:')) license2 = id;
+        if (id.startsWith('discord:')) discord = id;
+        if (id.startsWith('fivem:')) fivem = id;
+    }
+
+    if (!license2) return; // license2 é obrigatório como chave principal
+
+    await global.exports.oxmysql.update_async(
+        "UPDATE `users` SET  discord = IFNULL(?, discord), license = IFNULL(?, license), license2 = IFNULL(?, license2), fivem = IFNULL(?, fivem) WHERE userId in(select userId from players where license = ?)"
+    , [discord, license, license2, fivem, license2]);
+});
