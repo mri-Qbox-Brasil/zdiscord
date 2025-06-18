@@ -48,12 +48,11 @@ module.exports = {
             if (isOnline) {
                 identifiers = getPlayerIdentifiers(playerId);
             } else {
-                ids = await global.exports.oxmysql.query_async(`
+                let ids = await global.exports.oxmysql.query_async(`
                     SELECT * FROM users WHERE userId in (
                         SELECT userId FROM players WHERE citizenid = ?
                     )
                 `, [char.citizenid]);
-                console.log(identifiers);
                 if (ids && ids.length > 0) {
                     identifiers[0] = ids[0].discord;
                     identifiers[1] = ids[0].license;
@@ -62,7 +61,10 @@ module.exports = {
                 }
             }
 
+            console.log(JSON.stringify(identifiers));
+
             for (const id of identifiers) {
+                if (!id) continue;
                 if (id.startsWith('license:')) license = id;
                 if (id.startsWith('license2:')) license2 = id;
                 if (id.startsWith('discord:')) discord = id;
