@@ -61,8 +61,6 @@ module.exports = {
                 }
             }
 
-            console.log(JSON.stringify(identifiers));
-
             for (const id of identifiers) {
                 if (!id) continue;
                 if (id.startsWith('license:')) license = id;
