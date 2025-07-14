@@ -70,6 +70,15 @@ module.exports = {
             }
 
             const charName = `${charinfo.firstname} ${charinfo.lastname}`;
+
+            // Moedas (dinâmico)
+            const moneyFields = Object.entries(money).map(([currency, amount]) => ({
+                name: `💰 ${currency.charAt(0).toUpperCase() + currency.slice(1)}`,
+                value: `$${amount}`,
+                inline: true,
+            }));
+
+
             const embed = {
                 title: `${isOnline ? "[" + playerId + "]" : ""} ${charName} ${isOnline ? "(🟢 Online)" : "(🔴 Offline)"}`,
                 fields: [
@@ -80,8 +89,8 @@ module.exports = {
                     { name: "Nacionalidade", value: charinfo.nationality || "(vazio)", inline: true },
                     { name: "Trabalho", value: `${job.label} (${job.grade.name})`, inline: true },
                     { name: "Gangue", value: `${gang.label} (${gang.grade.name})`, inline: true },
-                    { name: "Dinheiro", value: `$${money.cash}`, inline: true },
-                    { name: "Banco", value: `$${money.bank}`, inline: true },
+                    { name: "Vip", value: charinfo.vip || "Nenhum", inline: true },
+                    ...moneyFields,
                     {
                         name: "Identificadores",
                         value: [
