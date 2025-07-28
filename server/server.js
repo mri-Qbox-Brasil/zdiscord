@@ -87,7 +87,7 @@ on("playerDropped", (reason) => {
 });
 
 if (z.config.EnableStaffChatForwarding) {
-    RegisterCommand("staff", (source, args, raw) => {
+    RegisterCommand("schat", (source, args, raw) => {
         if (!IsPlayerAceAllowed(source, "zdiscord.staffchat")) return;
         z.utils.sendStaffChatMessage(z, GetPlayerName(source), raw.substring(6));
         if (!z.config.EnableDiscordBot) return;
@@ -112,7 +112,7 @@ if (z.config.EnableStaffChatForwarding) {
     }, false);
 
     setImmediate(() => {
-        emit("chat:addSuggestion", "/staff", "Send message to other staff (Staff only)", [
+        emit("chat:addSuggestion", "/schat", "Send message to other staff (Staff only)", [
             { name:"Message", help:"Message to send to other staff" },
         ]);
         emit("chat:addSuggestion", "/stafftoggle", "Toggle staff chat messages", []);
