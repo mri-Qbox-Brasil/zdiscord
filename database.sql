@@ -6,4 +6,4 @@ CREATE TABLE `users` (
   `fivem` varchar(20) DEFAULT NULL,
   `discord` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
