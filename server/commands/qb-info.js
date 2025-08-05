@@ -18,7 +18,7 @@ module.exports = {
             SELECT
                 *
             FROM players
-            JOIN users ON users.userId = players.userId
+            JOIN users ON ${GetResourceState("qbx_core") == "started" ? "players.userId = users.userId" : "users.license = players.license OR users.license2 = players.license"}
             WHERE users.discord = ?
         `, [`discord:${user.id}`]);
 
