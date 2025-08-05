@@ -24,7 +24,7 @@ module.exports = {
                 players.charinfo,
                 players.name
             FROM players
-            JOIN users ON users.userId = players.userId
+            JOIN users ON ${GetResourceState("qbx_core") == "started" ? "players.userId = users.userId" : "users.license = players.license OR users.license2 = players.license"}
             WHERE users.discord = ?
         `, [`discord:${user.id}`]);
 
@@ -188,7 +188,19 @@ onNet('QBCore:Server:PlayerLoaded', async (player) => {
 
     if (!license2) return; // license2 é obrigatório como chave principal
 
-    await global.exports.oxmysql.update_async(
-        "UPDATE `users` SET  discord = IFNULL(?, discord), license = IFNULL(?, license), license2 = IFNULL(?, license2), fivem = IFNULL(?, fivem) WHERE userId in(select userId from players where license = ?)"
-    , [discord, license, license2, fivem, license2]);
+    if (await hasUser(license2)) {
+
+        global.exports.oxmysql.update_async(
+            "UPDATE `users` SET  discord = IFNULL(?, discord), license = IFNULL(?, license), license2 = IFNULL(?, license2), fivem = IFNULL(?, fivem) WHERE userId in(select userId from players where license = ?)"
+        , [discord, license, license2, fivem, license2]);
+    } else {
+        global.exports.oxmysql.insert_async(
+            "INSERT INTO `users` (discord, license, license2, fivem) VALUES (IFNULL(?, discord), IFNULL(?, license), IFNULL(?, license2), IFNULL(?, fivem))"
+        , [discord, license, license2, fivem]);
+    }
 });
+
+async function hasUser(license2) {
+    return global.exports.oxmysql.query_async("SELECT userId FROM users WHERE license2 = ?", [license2])
+        .then(rows => rows.length > 0);
+}

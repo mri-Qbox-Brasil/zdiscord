@@ -108,7 +108,7 @@ onNet('QBCore:Server:OnPlayerLoaded', async () => {
     if (!nameChanger.enabled) return;
 
     const player = global.source;
-    const coreObj = global.exports['qbx_core'];
+    const coreObj = global.exports['qb-core'];
 
     if (!coreObj) {
         nameChanger.z.utils.log.error(`core module not found`);
@@ -142,7 +142,7 @@ on('onResourceStart', async (resName) => {
     if (resName !== GetCurrentResourceName()) return;
     if (!nameChanger.enabled) return;
 
-    const coreObj = global.exports['qbx_core'];
+    const coreObj = global.exports['qb-core'];
     if (!coreObj) {
         nameChanger.z.utils.log.error("core module not found");
         return;
