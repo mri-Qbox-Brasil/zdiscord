@@ -21,6 +21,7 @@
   "homepage": "https://github.com/zfbx/zdiscord",
   "dependencies": {
     "discord.js": "github:zfbx/discord.js",
+    "mysqldump": "^3.2.0",
     "zdiscord": "file:"
   },
   "eslintConfig": {

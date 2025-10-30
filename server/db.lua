@@ -63,6 +63,9 @@ end
 -- Dispara a criação das tabelas ao iniciar o recurso
 AddEventHandler("onResourceStart", function(resourceName)
     if resourceName == GetCurrentResourceName() then
+        if (GetResourceState("qbx_core") == "started") then
+            return
+        end
         print("Recurso " .. resourceName .. " iniciado. Verificando/criando tabelas...")
         createTables()
     end
