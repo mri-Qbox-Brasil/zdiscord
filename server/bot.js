@@ -70,6 +70,14 @@ class Bot extends Client {
             this.commands.set(command.name, command);
             if (["MESSAGE", "USER"].includes(command.type)) delete command.description;
             this.arrayOfCommands.push(command);
+
+            if (typeof command.init === "function") {
+                try {
+                    command.init(this);
+                } catch (err) {
+                    this.log.handler("error", `Erro ao inicializar comando ${command.name}: ${err}`);
+                }
+            }
         }
     }
 
