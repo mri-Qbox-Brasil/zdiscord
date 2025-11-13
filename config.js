@@ -3,7 +3,6 @@
     Docs for this file available at https://zfbx.github.io/zdiscord/config or in docs/config.md
 */
 
-const { Guild } = require("discord.js");
 
 /** ******************************
  * GENERAL CONFIGURATION SETTINGS
