@@ -75,8 +75,8 @@ class NameChanger {
                 // se falhar, apenas continue e deixe a tentativa de setNickname produzir erro mais detalhado
             }
             if (!hasManageNickPerm) {
-                this.z.utils.log.error(`Bot parece não ter permissão de MANAGE_NICKNAMES na guild ${guildId}.`);
-                return false;
+                this.z.utils.log.warn(`Não foi possível confirmar se o bot tem permissão de MANAGE_NICKNAMES na guild ${guildId}. Prosseguindo com a tentativa de alterar o nickname; se faltar permissão, um erro detalhado será registrado.`);
+                // Prossegue mesmo assim; se faltar permissão, setNickname irá falhar e logar o erro detalhado.
             }
 
             // Tentar setar nickname e logar erro detalhado se falhar
