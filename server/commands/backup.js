@@ -119,7 +119,7 @@ async function createBackup(client, interaction = null) {
                     });
 
                     if (!channel) {
-                        z.utils.log.error(`Canal de backup (${BackupSettings.ChannelId}) nao encontrado. Nao e possivel enviar backup.`);
+                        z.utils.log.error(`Canal de backup (${BackupSettings.ChannelId}) não encontrado. Não é possível enviar backup.`);
                         return null;
                     }
 
