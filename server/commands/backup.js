@@ -95,6 +95,11 @@ async function createBackup(client, interaction = null) {
                         return null;
                     });
 
+                    if (!guild) {
+                        z.utils.log.error(`Guild ${guildId} não encontrada. Não é possível enviar backup.`);
+                        return null;
+                    }
+
                     const botId = z.bot.user && z.bot.user.id;
                     let botMember = null;
                     try {
