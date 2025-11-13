@@ -3,6 +3,7 @@
     Docs for this file available at https://zfbx.github.io/zdiscord/config or in docs/config.md
 */
 
+
 /** ******************************
  * GENERAL CONFIGURATION SETTINGS
  ********************************/
@@ -66,15 +67,16 @@ const NameChanger = {
 
 const BoosterReward = {
     Enabled: true, // Ativa ou desativa o Booster Reward
-    BoosterRoleId: "", // ID da role que receberá o booster reward
+    BoosterRoleId: "000000000000000000", // ID da role que receberá o booster reward
     RewardServerTrigger: "", // Trigger server-side para dar o reward, sera enviado o citizenId de parametro
     ExpiryRewardServerTrigger: "", // Trigger server-side para remover o reward, sera enviado o citizenId de parametro
 };
 
 const BackupSettings = {
     Enabled: true, // Ativa ou desativa o Backup
+    GuildId: "000000000000000000", // ID do servidor alternativo para enviar o backup (deixe vazio para o servidor principal)
     ChannelId: "000000000000000000", // ID do canal onde o backup será enviado
-    Interval: 1440, // Intervalo em minutos para gerar o backup
+    Interval: 1440, // Intervalo em minutos para gerar o backup (1440 = 24 horas)
     Path: "./backups", // Caminho onde os backups serão armazenados
 };
 
@@ -180,10 +182,8 @@ module.exports = {
     ],
     BackupSettings: {
         Enabled: getConBool("discord_enable_backup", BackupSettings.Enabled),
-        ChannelId: GetConvar(
-            "discord_backup_channel_id",
-            BackupSettings.ChannelId
-        ),
+        ChannelId: GetConvar("discord_backup_channel_id", BackupSettings.ChannelId),
+        GuildId: GetConvar("discord_backup_guild_id", BackupSettings.GuildId),
         Interval: getConInt("discord_backup_interval", BackupSettings.Interval),
         Path: GetConvar("discord_backup_path", BackupSettings.Path),
     },
