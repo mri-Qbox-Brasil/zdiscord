@@ -95,7 +95,7 @@ async function createBackup(client, interaction = null) {
                     }
                     z.utils.log.info(`Enviando backup para guild ${guildId}...`);
                     const guild = await z.bot.guilds.fetch(guildId).catch((err) => {
-                        z.utils.log.error(`Erro ao buscar guild (${guildId}):`, err?.stack || err);
+                        z.utils.log.error(`Erro ao buscar guild (${guildId}): ${err?.stack || err}`);
                         return interaction?.editReply({ content: `Erro ao buscar servidor (${guildId}).`, ephemeral: true });
                     });
 
@@ -123,7 +123,7 @@ async function createBackup(client, interaction = null) {
                     }
 
                     const channel = await guild.channels.fetch(BackupSettings.ChannelId).catch((err) => {
-                        z.utils.log.error(`Erro ao buscar canal de backup (${BackupSettings.ChannelId}):`, err?.stack || err);
+                        z.utils.log.error(`Erro ao buscar canal de backup (${BackupSettings.ChannelId}): ${err?.stack || err}`);
                         return interaction?.editReply({ content: `Erro ao buscar canal de backup (${BackupSettings.ChannelId}).`, ephemeral: true });
                     });
 
@@ -138,12 +138,12 @@ async function createBackup(client, interaction = null) {
                             content: channelMsg,
                             files: [fileName]
                         }).catch((err) => {
-                            z.utils.log.error(`Erro ao enviar backup para o canal (${BackupSettings.ChannelId}):`, err?.stack || err);
+                            z.utils.log.error(`Erro ao enviar backup para o canal (${BackupSettings.ChannelId}): ${err?.stack || err}`);
                             return interaction?.editReply({ content: `Erro ao enviar backup para o canal, talvez o arquivo seja muito grande.\n O backup foi gerado com sucesso localmente.`, ephemeral: true });
                         });
                     }
                 } catch (sendErr) {
-                    console.error("Erro ao enviar backup para o canal:", sendErr);
+                    z.utils.log.error("Erro ao enviar backup para o canal:", sendErr);
                 }
 
                 if (interaction) {
@@ -189,13 +189,13 @@ module.exports = {
                 const start = Date.now();
                 const id = setInterval(() => {
                     createBackup(client, null).catch(err => {
-                        console.error("Erro no backup agendado:", err);
+                        z.utils.log.error(`Erro ao executar o backup agendado: ${err?.stack || err}`);
                     });
                 }, intervalMs);
                 client._backupIntervals.push(id);
                 client._backupScheduler = { start, intervalMs, timerId: id };
             } else {
-                console.info("Backups periódicos desativados (interval <= 0)");
+                z.utils.log.info("Backups periódicos desativados (interval <= 0)");
             }
         };
 
