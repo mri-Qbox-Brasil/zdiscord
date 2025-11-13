@@ -82,11 +82,17 @@ class BoosterReward {
 onNet("QBCore:Server:OnPlayerLoaded", async () => {
     if (!boosterReward.enabled) return;
     const player = global.source;
-    const coreObj = global.exports["qbx_core"];
+    let coreObj = global.exports["qb-core"];
+
+    if (GetResourceState("qbx_core") == "started") {
+        coreObj = global.exports["qbx_core"];
+    }
+
     if (!coreObj) {
         console.error(`core module not found`);
         return;
     }
+
     let playerEntity = coreObj.GetPlayer(player);
     if (!playerEntity) {
         console.error(`Player entity not found for player ${player}`);

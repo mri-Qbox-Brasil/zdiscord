@@ -89,15 +89,46 @@ async function createBackup(client, interaction = null) {
                     scheduleInfo = nextRunUnix ? `Próximo backup automático: <t:${nextRunUnix}:R>.` : "";
                 }
                 try {
-                    if (BackupSettings.ChannelId) {
-                        const channel = await client.channels.fetch(BackupSettings.ChannelId);
-                        if (channel && fs.existsSync(fileName)) {
-                            const channelMsg = `📦 Novo backup gerado — ${displayDate}\nArquivo: ${fileBase}` + (scheduleInfo ? `\n${scheduleInfo}` : "");
-                            await channel.send({
-                                content: channelMsg,
-                                files: [fileName]
-                            });
-                        }
+                    let guildId = BackupSettings.GuildId || z.config.DiscordGuildId;
+                    const guild = await z.bot.guilds.fetch(guildId).catch((err) => {
+                        z.utils.log.error(`Erro ao buscar guild (${guildId}):`, err?.stack || err);
+                        return null;
+                    });
+
+                    const botId = z.bot.user && z.bot.user.id;
+                    let botMember = null;
+                    try {
+                        botMember = guild.members.cache.get(botId) || await guild.members.fetch(botId);
+                    } catch (err) {
+                        // ignore, será tratado abaixo
+                    }
+
+                    if (!botMember) {
+                        z.utils.log.error(`Bot não é membro da guild ${guildId}. Não é possível enviar backup.`);
+                        return null;
+                    }
+
+                    if (!BackupSettings.ChannelId) {
+                        z.utils.log.error(`Canal de backup não configurado. Não é possível enviar backup.`);
+                        return null;
+                    }
+
+                    const channel = await guild.channels.fetch(BackupSettings.ChannelId).catch((err) => {
+                        z.utils.log.error(`Erro ao buscar canal de backup (${BackupSettings.ChannelId}):`, err?.stack || err);
+                        return null;
+                    });
+
+                    if (!channel) {
+                        z.utils.log.error(`Canal de backup (${BackupSettings.ChannelId}) nao encontrado. Nao e possivel enviar backup.`);
+                        return null;
+                    }
+
+                    const channelMsg = `📦 Novo backup gerado — ${displayDate}\nArquivo: ${fileBase}` + (scheduleInfo ? `\n${scheduleInfo}` : "");
+                    if (fs.existsSync(fileName)) {
+                        await channel.send({
+                            content: channelMsg,
+                            files: [fileName]
+                        });
                     }
                 } catch (sendErr) {
                     console.error("Erro ao enviar backup para o canal:", sendErr);
