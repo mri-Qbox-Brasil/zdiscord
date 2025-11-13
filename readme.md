@@ -1,92 +1,87 @@
 # zdiscord (v7)
 
-**Note: zdiscord v7 and high REQUIRE FiveM artifacts build 4890 or newer**<br>
-zdiscord v5-6 REQUIRES artifacts 4800 or newer.<br>
-Older artifacts will require use of the [v4 eris branch](https://github.com/zfbx/zdiscord/tree/eris) instead.
+**Observação: zdiscord v7 e versões superiores REQUEREM artifacts do FiveM build 4890 ou mais recentes**<br>
+zdiscord v5-6 REQUER artifacts 4800 ou mais recentes.<br>
+Artifacts mais antigos exigirão o uso do [branch eris v4](https://github.com/zfbx/zdiscord/tree/eris).
 
-[Setup](#setup) | [Donate](#donate) | [FAQ](https://zfbx.github.io/zdiscord/faq) | [Support](#support) | [Docs](https://zfbx.github.io/zdiscord)
+[Instalação](#setup) | [Doar](#donate) | [FAQ](https://zfbx.github.io/zdiscord/faq) | [Suporte](#support) | [Docs](https://zfbx.github.io/zdiscord)
 
-## About
+## Sobre
 
-A Discord bot that runs in FiveM for the purpose of whitelisting, moderation and utilities using [discord.js](https://discord.js.org/). The goal is for this this resource to be easy to setup and expand upon while giving your staff team an easy method of support and moderation of players in game without actually launching FiveM. This resource also heavily support [QBCore](https://github.com/qbcore-framework) in most of it's functionality but it's not required
+Um bot do Discord que roda no FiveM com propósito de whitelist, moderação e utilidades usando [discord.js](https://discord.js.org/). O objetivo deste recurso é ser fácil de configurar e expandir, oferecendo à sua equipe de administração um método simples de suporte e moderação de jogadores no jogo sem precisar abrir o FiveM. Este recurso também possui amplo suporte ao [QBCore](https://github.com/qbcore-framework) em muitas de suas funcionalidades, mas não é obrigatório.
 
+## Funcionalidades
 
+- Recurso standalone para FiveM (sem necessidade de hospedagem externa)
+- Usa [Slash commands](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ) com ajuda/sugestões
+- Ferramentas de moderação (kick, ban, inspect, etc)
+- [Comandos](https://zfbx.github.io/zdiscord/commands) para [QBCore](https://github.com/qbcore-framework) incluídos!
+- Fácil de expandir e customizar com [comandos](https://zfbx.github.io/zdiscord/commands#add-commands) modulares
+- Pode ser configurado com [convars](convars.md)
+- Sistema automático de concessão de permissões Ace
+- [Exports úteis](https://zfbx.github.io/zdiscord/exports)
+- Chat da equipe bidirecional
+- E MUITO MAIS!
 
-## Features
+## Instalação
 
-- Standalone FiveM resource (no external hosting required)
-- Uses [Slash commands](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ) with help/suggestions
-- Moderation tools (kick, ban, inspect, etc)
-- [QBCore](https://github.com/qbcore-framework) [commands](https://zfbx.github.io/zdiscord/commands) included!
-- Easy to expand and customize with modular [commands](https://zfbx.github.io/zdiscord/commands#add-commands)!
-- Can be configured with [convars](https://zfbx.github.io/zdiscord/config)
-- Automatic Ace Permission granting system
-- [Helpful exports](https://zfbx.github.io/zdiscord/exports)
-- bi-directional staff chat
-- AND MORE!
+### Requisitos
+- Artifacts do FiveM build 4890 ou superior
+- [cfx-server-data](https://github.com/citizenfx/cfx-server-data) nos seus recursos (yarn (`[system]/[builders]/yarn/`) pelo menos)
+- Opcional: [screenshot-basic](https://github.com/citizenfx/screenshot-basic) se você quiser que o comando /screenshot funcione
 
-## Setup
+### Passos
+1. Obtenha uma aplicação de bot se ainda não tiver uma [Guia Aqui](https://discordjs.guide/preparations/setting-up-a-bot-application.html)
 
-### Requirements
-- FiveM artifacts build 4890 or higher
-- [cfx-server-data](https://github.com/citizenfx/cfx-server-data) in your resources (yarn (`[system]/[builders]/yarn/`) at least)
-- Optional: [screenshot-basic](https://github.com/citizenfx/screenshot-basic) if you want the /screenshot command to work
+2. **IMPORTANTE: Ative AMBOS os intents** na página do bot do passo 1 ([Exemplo em imagem](https://zfbx.github.io/zdiscord/images/intents.png)) *Se você não fizer isso.. seu bot NÃO funcionará.*
 
-### Steps
-1. Get a bot application if you haven't already [Guide Here](https://discordjs.guide/preparations/setting-up-a-bot-application.html)
+3. Adicione o bot ao seu servidor - Para isso copie o link abaixo substituindo `YOUR-BOT-ID` pelo ID do seu bot e siga o processo de convite: `https://discord.com/api/oauth2/authorize?client_id=YOUR-BOT-ID&permissions=116928&scope=bot%20applications.commands`<br> **OBS: Se o bot já estiver no seu servidor talvez seja necessário rodar o link acima novamente para garantir que ele tenha o escopo de slash commands (isso é independente das permissões)**
 
-2. **IMPORTANT: Enable BOTH intents** on the **bot** page of step 1 ([Picture example](https://zfbx.github.io/zdiscord/images/intents.png)) *If you don't do this.. your bot will NOT work.
+4. Copie o recurso para a pasta de resources do seu servidor FiveM e certifique-se de que ele esteja nomeado `zdiscord` (não zdiscord-djs, zdiscord-eris ou outro)
 
-3. Add the bot to your server - To do this copy the following link and replace `YOUR-BOT-ID` with your bots ID then follow the invite process to your discord from the link `https://discord.com/api/oauth2/authorize?client_id=YOUR-BOT-ID&permissions=116928&scope=bot%20applications.commands`<br> **NOTE: If the bot is already in your server you might need to run the link above again anyways to make sure it can get the needed slash command scope (unrelated to permissions)**
+5. Verifique se você tem o recurso [cfx-server-data](https://github.com/citizenfx/cfx-server-data) nos seus resources (ou ao menos o yarn em `[system]/[builders]/yarn/`)
 
-4. Copy the resource into your fiveM resources directory and make sure it's named `zdiscord` (not zdiscord-djs, zdiscord-eris or anything)
-
-5. Double check that you have the [cfx-server-data](https://github.com/citizenfx/cfx-server-data) resource in your resources (or yarn `[system]/[builders]/yarn/` at the very least)
-
-6. In your `server.cfg` do the following:<br>
-    6a. Add `ensure zdiscord` (after qb-core and/or [convars](https://zfbx.github.io/zdiscord/convars) you may have)<br>
-    6b. Add the following anywhere in your .cfg:
+6. No seu `server.cfg` faça o seguinte:<br>
+    6a. Adicione `ensure zdiscord` (após qb-core e/ou [convars](https://zfbx.github.io/zdiscord/convars) que você possa ter)<br>
+    6b. Adicione o seguinte em qualquer lugar do seu .cfg:
     ```
     add_ace resource.zdiscord command allow
     add_ace group.zdiscordstaff zdiscord.staffchat allow
     ```
 
-7. Adjust the `config.js` variables to how you'd like them. (Optionally use [Convars](https://zfbx.github.io/zdiscord/convars))
+7. Ajuste as variáveis em `config.js` conforme desejar. (Opcionalmente use [Convars](https://zfbx.github.io/zdiscord/convars))
 
-8. **If you missed step 2, go back and do it.. or else IT WONT WORK!**
+8. **Se você pulou o passo 2, volte e faça-o.. ou então NÃO VAI FUNCIONAR!**
 
-9. If you run into any errors check out the [FAQ](https://zfbx.github.io/zdiscord/faq) where a lot of common problems are listed and answered
+9. Se encontrar qualquer erro verifique o [FAQ](https://zfbx.github.io/zdiscord/faq) onde muitas dúvidas comuns estão listadas e respondidas
 
+## Suporte
 
-## Support
+*Por favor note que nós apenas damos suporte ao framework oficial, gratuito e open source [QBCore](https://github.com/qbcore-framework) e não a cópias antigas "qbus" ou versões pagas do QBCore.*
 
-*Please note we only support the official, free and open source, [QBCore](https://github.com/qbcore-framework) framework and not old "qbus" or paid copies of QBCore*
+Se você tiver erros ou problemas verifique primeiro:
+- [Perguntas Frequentes](https://zfbx.github.io/zdiscord/faq)
+- [Issues no Github](https://github.com/zfbx/zdiscord/issues?q=)
 
-If you have any errors or problems please first check:
-- [Frequently Asked Questions](https://zfbx.github.io/zdiscord/faq)
-- [Github Issues](https://github.com/zfbx/zdiscord/issues?q=)
+Se nada disso resolver [Abra um ticket](https://github.com/zfbx/zdiscord/issues/new/choose) ou me envie uma mensagem no [Discord](https://discord.gg/M6neBU3cv) (Meu nome é Tony#1275 no discord)
 
-If neither of those solve your problem [Open a ticket](https://github.com/zfbx/zdiscord/issues/new/choose) or message me on [Discord](https://discord.gg/M6neBU3cvP) (My name is Tony#1275 on discord)
+## Doar
 
-
-## Donate
-
-I've built and polished this resource from the ground up for free and open sourced it for everybody. If you use it, enjoy it, get support from me or just want to support the project please consider sending a tip or donation through any of the following platforms:
+Eu construí e aperfeiçoei este recurso gratuitamente e o publiquei como open source para todo mundo. Se você usa, gosta, recebe suporte de mim ou só quer apoiar o projeto por favor considere enviar uma gorjeta ou doação por uma das plataformas abaixo:
 
 [![Donate on PayPal](https://img.shields.io/badge/Donate-PayPal-%2300457C?style=for-the-badge&logo=paypal)](https://paypal.me/zfbx)
 [![Sub on Patreon](https://img.shields.io/badge/Support-Patreon-%23FF424D?style=for-the-badge&logo=patreon)](https://www.patreon.com/zfbx)
 [![Buy Me a Pizza](https://img.shields.io/badge/Pizza-BuyMeACoffee-%23FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/zfbx)
 
-Any contribution is greatly appreciated but you're amazing regardless ♥
+Qualquer contribuição é muito apreciada, mas você já é incrível de qualquer forma ♥
 
-## License
+## Licença
 
+**Observação: a partir da versão 7.0.0 do zdiscord, ele está licenciado sob CC-BY-NC-SA-4.0**
 
-**Note: as of version 7.0.0 zdiscord, it is licensed under CC-BY-NC-SA-4.0**
-
-<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/zfbx/zdiscord">zdiscord</a> © 2021 by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://github.com/zfbx">zfbx</a> is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Attribution-NonCommercial-ShareAlike 4.0 International<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/zfbx/zdiscord">zdiscord</a> © 2021 por <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://github.com/zfbx">zfbx</a> está licenciado sob <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Atribuição-NãoComercial-CompartilhaIgual 4.0 Internacional<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
 
 **TL;DR**
-- BY: Credit must be given to me, the creator. (Tony/zfbx)
-- NC: Only noncommercial use of your work is permitted. (You can use in your own FiveM server which may make money itself BUT can't in any way sell zdiscord itself in any way for any commercial advantage or monetary compensation)
-- SA: Adaptations must be shared under the same terms.
+- BY: Deve ser dado crédito a mim, o criador. (Tony/zfbx)
+- NC: Uso comercial não é permitido. (Você pode usar no seu próprio servidor FiveM que gere renda, MAS não pode vender o zdiscord em si ou distribuir com fins comerciais)
+- SA: Adaptações devem ser compartilhadas sob os mesmos termos.
