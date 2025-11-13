@@ -89,15 +89,19 @@ async function createBackup(client, interaction = null) {
                     scheduleInfo = nextRunUnix ? `Próximo backup automático: <t:${nextRunUnix}:R>.` : "";
                 }
                 try {
-                    let guildId = BackupSettings.GuildId || z.config.DiscordGuildId;
+                    let guildId = BackupSettings.GuildId;
+                    if (parseInt(guildId) === 0) {
+                        guildId = z.config.DiscordGuildId;
+                    }
+                    z.utils.log.info(`Enviando backup para guild ${guildId}...`);
                     const guild = await z.bot.guilds.fetch(guildId).catch((err) => {
                         z.utils.log.error(`Erro ao buscar guild (${guildId}):`, err?.stack || err);
-                        return null;
+                        return interaction?.editReply({ content: `Erro ao buscar servidor (${guildId}).`, ephemeral: true });
                     });
 
                     if (!guild) {
                         z.utils.log.error(`Guild ${guildId} não encontrada. Não é possível enviar backup.`);
-                        return null;
+                        return interaction?.editReply({ content: `Servidor (${guildId}) não encontrado.`, ephemeral: true });
                     }
 
                     const botId = z.bot.user && z.bot.user.id;
@@ -110,22 +114,22 @@ async function createBackup(client, interaction = null) {
 
                     if (!botMember) {
                         z.utils.log.error(`Bot não é membro da guild ${guildId}. Não é possível enviar backup.`);
-                        return null;
+                        return interaction?.editReply({ content: `Bot não é membro da guild (${guildId}).`, ephemeral: true });
                     }
 
                     if (!BackupSettings.ChannelId) {
                         z.utils.log.error(`Canal de backup não configurado. Não é possível enviar backup.`);
-                        return null;
+                        return interaction?.editReply({ content: `Canal de backup não configurado.`, ephemeral: true });
                     }
 
                     const channel = await guild.channels.fetch(BackupSettings.ChannelId).catch((err) => {
                         z.utils.log.error(`Erro ao buscar canal de backup (${BackupSettings.ChannelId}):`, err?.stack || err);
-                        return null;
+                        return interaction?.editReply({ content: `Erro ao buscar canal de backup (${BackupSettings.ChannelId}).`, ephemeral: true });
                     });
 
                     if (!channel) {
                         z.utils.log.error(`Canal de backup (${BackupSettings.ChannelId}) não encontrado. Não é possível enviar backup.`);
-                        return null;
+                        return interaction?.editReply({ content: `Canal de backup (${BackupSettings.ChannelId}) não encontrado.`, ephemeral: true });
                     }
 
                     const channelMsg = `📦 Novo backup gerado — ${displayDate}\nArquivo: ${fileBase}` + (scheduleInfo ? `\n${scheduleInfo}` : "");
@@ -133,6 +137,9 @@ async function createBackup(client, interaction = null) {
                         await channel.send({
                             content: channelMsg,
                             files: [fileName]
+                        }).catch((err) => {
+                            z.utils.log.error(`Erro ao enviar backup para o canal (${BackupSettings.ChannelId}):`, err?.stack || err);
+                            return interaction?.editReply({ content: `Erro ao enviar backup para o canal, talvez o arquivo seja muito grande.\n O backup foi gerado com sucesso localmente.`, ephemeral: true });
                         });
                     }
                 } catch (sendErr) {
